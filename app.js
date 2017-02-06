@@ -3,7 +3,7 @@ var http = require('http');
 var https = require('https');
 var path = require('path');
 var server = require('socket.io');
-var pty = require('pty.js');
+var pty = require('node-pty');
 var fs = require('fs');
 var mdns = require('mdns');
 
@@ -46,6 +46,7 @@ var sshhost = 'localhost';
 var sshauth = 'password';
 var globalsshuser = '';
 
+debugger;
 if (opts.sshport) {
     sshport = opts.sshport;
 }
@@ -79,7 +80,11 @@ var app = express();
 app.get('/wetty/ssh/:user', function(req, res) {
     res.sendfile(__dirname + '/public/wetty/index.html');
 });
+app.get('/vnc', function(req, res) {
+    res.sendfile(__dirname + '/novnc/vnc.html');
+});
 app.use('/', express.static(path.join(__dirname, 'public')));
+app.use('/novnc', express.static(path.join(__dirname, 'novnc')));
 
 if (runhttps) {
     httpserv = https.createServer(opts.ssl, app).listen(opts.port, function() {
@@ -92,11 +97,11 @@ if (runhttps) {
 }
 
 // Start advertisement for SSH terminal over FlyWeb
-var advertisement = mdns.createAdvertisement(mdns.tcp('flyweb'), opts.port, {
-  name: 'Flyweb SSH Terminal',
-  txtRecord: {}
-});
-advertisement.start();
+// var advertisement = mdns.createAdvertisement(mdns.tcp('flyweb'), opts.port, {
+//   name: 'Flyweb SSH Terminal',
+//   txtRecord: {}
+// });
+// advertisement.start();
 
 var io = server(httpserv,{path: '/wetty/socket.io'});
 io.on('connection', function(socket){

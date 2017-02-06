@@ -35,6 +35,12 @@ You can also specify the SSH user name in the address bar like this:
 
   `http://yourserver:3000/wetty/ssh/<username>`
 
+A noVNC client is available at `/vnc`. For the VNC client to function, 
+a VNC server must be running on the host, and a 
+[websockify](https://github.com/novnc/websockify) instance must be
+wrapping that VNC server to allow the client to connect to the server
+using websockets. Eventually, FlyPi should set up/take down the server
+and websockify automatically.
 
 Run on HTTPS:
 ------------
