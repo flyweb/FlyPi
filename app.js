@@ -6,6 +6,8 @@ var server = require('socket.io');
 var pty = require('node-pty');
 var fs = require('fs');
 var mdns = require('mdns');
+var net = require('net');
+var WebSocketServer = require('ws').Server;
 
 var opts = require('optimist')
     .options({
@@ -33,6 +35,14 @@ var opts = require('optimist')
             demand: false,
             description: 'defaults to "password", you can use "publickey,password" instead'
         },
+        vnchost: {
+            demand: false,
+            description: 'vnc server host, defaults to localhost'
+        },
+        vncport: {
+            demand: false,
+            description: 'vnc server port, defaults to 5900'
+        },
         port: {
             demand: true,
             alias: 'p',
@@ -41,27 +51,12 @@ var opts = require('optimist')
     }).boolean('allow_discovery').argv;
 
 var runhttps = false;
-var sshport = 22;
-var sshhost = 'localhost';
-var sshauth = 'password';
-var globalsshuser = '';
-
-debugger;
-if (opts.sshport) {
-    sshport = opts.sshport;
-}
-
-if (opts.sshhost) {
-    sshhost = opts.sshhost;
-}
-
-if (opts.sshauth) {
-	sshauth = opts.sshauth
-}
-
-if (opts.sshuser) {
-    globalsshuser = opts.sshuser;
-}
+var sshport = opts.sshport ? opts.sshport : 22;
+var sshhost = opts.sshhost ? opts.sshhost : 'localhost';
+var sshauth = opts.sshauth ? opts.sshauth : 'password';
+var globalsshuser = opts.sshuser ? opts.sshuser : '';
+var vnchost = opts.vnchost ? opts.vnchost : 'localhost';
+var vncport = opts.vncport ? opts.vncport : 5900;
 
 if (opts.sslkey && opts.sslcert) {
     runhttps = true;
@@ -74,7 +69,7 @@ process.on('uncaughtException', function(e) {
     console.error('Error: ' + e);
 });
 
-var httpserv;
+var httpServer, wsServer;
 
 var app = express();
 app.get('/wetty/ssh/:user', function(req, res) {
@@ -87,23 +82,77 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/novnc', express.static(path.join(__dirname, 'novnc')));
 
 if (runhttps) {
-    httpserv = https.createServer(opts.ssl, app).listen(opts.port, function() {
+    httpServer = https.createServer(opts.ssl, app).listen(opts.port, function() {
         console.log('https on port ' + opts.port);
+        wsServer = new WebSocketServer({server: httpServer});
+        wsServer.on('connection', newWebSocketClient);
     });
 } else {
-    httpserv = http.createServer(app).listen(opts.port, function() {
+    httpServer = http.createServer(app).listen(opts.port, function() {
         console.log('http on port ' + opts.port);
+        wsServer = new WebSocketServer({server: httpServer});
+        wsServer.on('connection', newWebSocketClient);
     });
 }
 
 // Start advertisement for SSH terminal over FlyWeb
-// var advertisement = mdns.createAdvertisement(mdns.tcp('flyweb'), opts.port, {
-//   name: 'Flyweb SSH Terminal',
-//   txtRecord: {}
-// });
-// advertisement.start();
+var advertisement = mdns.createAdvertisement(mdns.tcp('flyweb'), opts.port, {
+  name: 'Flyweb SSH Terminal',
+  txtRecord: {}
+});
+advertisement.start();
 
-var io = server(httpserv,{path: '/wetty/socket.io'});
+var newWebSocketClient = function(client) {
+    var clientAddr = client._socket.remoteAddress, log;
+    console.log(client.upgradeReq.url);
+    log = function (msg) {
+        console.log(' ' + clientAddr + ': '+ msg);
+    };
+    log('WebSocket connection');
+    log('Version ' + client.protocolVersion + ', subprotocol: ' + client.protocol);
+
+    var target = net.createConnection(vncport, vnchost, function() {
+        log('connected to target');
+    });
+
+    target.on('data', function(data) {
+        //log("sending message: " + data);
+        try {
+            client.send(data);
+        } catch(e) {
+            log("Client closed, cleaning up target");
+            target.end();
+        }
+    });
+
+    target.on('end', function() {
+        log('target disconnected');
+        client.close();
+    });
+
+    target.on('error', function() {
+        log('target connection error');
+        target.end();
+        client.close();
+    });
+
+    client.on('message', function(msg) {
+        //log('got message: ' + msg);
+        target.write(msg);
+    });
+
+    client.on('close', function(code, reason) {
+        log('WebSocket client disconnected: ' + code + ' [' + reason + ']');
+        target.end();
+    });
+
+    client.on('error', function(a) {
+        log('WebSocket client error: ' + a);
+        target.end();
+    });
+};
+
+var io = server(httpServer,{path: '/wetty/socket.io'});
 io.on('connection', function(socket){
     var sshuser = '';
     var request = socket.request;
