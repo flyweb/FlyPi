@@ -18,6 +18,26 @@ Install
 
 *  `npm install`
 
+Use VNC:
+-------
+
+First, install tightvnc:
+
+  `sudo apt-get install tightvnc`
+
+ Run `vncserver`. It will prompt you to set a password for VNC.
+
+Then, add the following lines to `/etc/rc.local`:
+
+  ```
+  su pi -c 'vncserver'
+  su pi -c 'node [FlyPi directory]/app.js -p 3000 --vncport 5901 < /dev/null &'
+  ```
+
+This will start a VNC server and FlyPi whenever the Raspberry Pi boots.
+Reboot, and you should be able to access FlyPi using FlyWeb, and the VNC
+client at `/vnc`.
+
 Run on HTTP:
 -----------
 
@@ -35,6 +55,7 @@ You can also specify the SSH user name in the address bar like this:
 
   `http://yourserver:3000/wetty/ssh/<username>`
 
+A noVNC client is available at `/vnc`.
 
 Run on HTTPS:
 ------------
