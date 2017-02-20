@@ -31,7 +31,7 @@ Then, add the following lines to `/etc/rc.local`:
 
   ```
   su pi -c 'vncserver'
-  su pi -c 'node [FlyPi directory]/app.js -p 3000 --vncport 5901 < /dev/null &'
+  su pi -c 'node /home/pi/FlyPi/remote/app.js -p 3000 --vncport 5901 && node /home/pi/FlyPi/scripts/start.js < /dev/null &'
   ```
 
 This will start a VNC server and FlyPi whenever the Raspberry Pi boots.
