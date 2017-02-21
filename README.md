@@ -23,7 +23,7 @@ Use VNC:
 
 First, install tightvnc:
 
-  `sudo apt-get install tightvnc`
+  `sudo apt-get install tightvncserver`
 
  Run `vncserver`. It will prompt you to set a password for VNC.
 
