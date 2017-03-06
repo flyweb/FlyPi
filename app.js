@@ -8,6 +8,8 @@ var fs = require('fs');
 var mdns = require('mdns');
 var net = require('net');
 var WebSocketServer = require('ws').Server;
+var wifi = require('./app/wifi');
+var WiFiControl = require('wifi-control');
 
 var opts = require('optimist')
     .options({
@@ -71,6 +73,8 @@ process.on('uncaughtException', function(e) {
 
 var httpServer, wsServer;
 
+WiFiControl.init();
+
 var app = express();
 app.get('/wetty/ssh/:user', function(req, res) {
     res.sendfile(__dirname + '/public/wetty/index.html');
@@ -78,8 +82,10 @@ app.get('/wetty/ssh/:user', function(req, res) {
 app.get('/vnc', function(req, res) {
     res.sendfile(__dirname + '/novnc/vnc.html');
 });
+app.use('/wifi', wifi);
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/novnc', express.static(path.join(__dirname, 'novnc')));
+app.use('/vendor', express.static(path.join(__dirname, 'node_modules')));
 
 if (runhttps) {
     httpServer = https.createServer(opts.ssl, app).listen(opts.port, function() {
