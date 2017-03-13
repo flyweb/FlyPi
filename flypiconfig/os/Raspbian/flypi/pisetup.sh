@@ -5,7 +5,7 @@ touch /home/pi/2
 sudo apt-get --assume-yes install build-essential libavahi-compat-libdnssd-dev tightvncserver expect
 touch /home/pi/3
 
-./spawnvnc.sh
+/home/pi/spawnvnc.sh
 touch /home/pi/4
 vncserver
 touch /home/pi/5
