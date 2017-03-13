@@ -18,5 +18,7 @@ if [ "$_IP" ]; then
 fi
 
 # Add FlyPi modifications here
+su pi -c 'vncserver'
+su pi -c 'node /home/pi/FlyPi/app.js -p 3000'
 
 exit 0
