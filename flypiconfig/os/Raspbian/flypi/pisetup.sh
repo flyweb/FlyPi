@@ -5,12 +5,12 @@ touch /home/pi/2
 sudo apt-get --assume-yes install build-essential libavahi-compat-libdnssd-dev tightvncserver expect
 touch /home/pi/3
 
-/home/pi/spawnvnc.sh
+cd /home/pi && /home/pi/spawnvnc.sh
 touch /home/pi/4
 vncserver
 touch /home/pi/5
 
-cd /home/pi && git clone https://github.com/flyweb/FlyPi.git && cd FlyPi && git checkout feature/config
+git clone https://github.com/flyweb/FlyPi.git && cd FlyPi && git checkout feature/config
 touch /home/pi/6
 sudo npm install -g node-gyp && npm install
 touch /home/pi/7
