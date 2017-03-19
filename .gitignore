@@ -15,4 +15,6 @@ results
 npm-debug.log
 node_modules/*
 
+flypiconfig/os/Raspbian/wifi/wpa_supplicant.conf
+
 .vscode

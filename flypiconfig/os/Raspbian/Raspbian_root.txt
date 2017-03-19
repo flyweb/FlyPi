@@ -1,0 +1,6 @@
+wifi/interfaces /etc/network 0644 root root
+wifi/wpa_supplicant.conf /etc/wpa_supplicant 0600 root root
+flypi/pisetup.sh /home/pi 0777 root root
+flypi/spawnvnc.sh /home/pi 0777 root root
+flypi/rc.local /etc/rc.local 0600 root root
+

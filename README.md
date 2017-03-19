@@ -1,73 +1,29 @@
 # FlyPi
 
-Raspberry Pi initial setup and maintenance tool using FlyWeb that allows users to configure WiFi settings and access SSH and VNC through the browser. The goal of this project aims to simplify the initial setup and regular access to "headless" Raspberry Pi devices.
+Raspberry Pi initial setup tool that enables browser SSH and VNC access over the local network using FlyWeb. This project aims to simplify the initial setup process for headless Raspberry Pi devices to a single step, saving time for newbies and veterans alike!
 
-The current version of the project currently only supports SSH.
-
-### Features
-- Initial setup mode
-  - Raspberry Pi acts as a WiFi AP
-  - FlyWeb application lets users select their home WiFi network and provide credentials
-  - Set SSH/VNC username and password
-- Maintenance mode
-  - Raspberry Pi joins home WiFi network
-  - FlyWeb application lets users SSH and VNC into the Raspberry Pi through the browser
+Contributions are welcome. :)
 
 Install
 -------
 
-*  `npm install`
+1. Install [PiBakery](http://www.pibakery.org/download.html) for your selected operating system (Mac and Windows supported). PiBakery contains a full version of the latest Raspbian image and is used to run the post-install operations required to configure FlyPi.
+2. Open PiBakery and click import. Select the PiBakeryRecipe.xml file located in the root of this repository.
+3. Input the credentials for your WiFi network in the first block.
+3. Format your MicroSD card using FAT.
+4. Click write in PiBakery and select your SD Card in the first box. Make sure that Raspbian Full is selected in the second box, the click Start Write (note that this step can take upwards of five minutes, this is normal).
+5. Once the write has been completed, place your SD card into your Raspberry Pi and power up as normal. PiBakery will then install Raspbian and configure the required dependencies for FlyPi, this could take upwards of ten minutes depending on networok speed.
+6. Once setup has been completed, your Raspberry Pi should reboot and the FlyPi SSH Terminal should be advertised on your local network over FlyWeb.
+7. (Optional) Both VNC and SSH will be configured with the default password "raspberry". We strongly recommend that you change the default password and perform a full update of system packages for security reasons.
 
-Use VNC:
+Usage:
 -------
 
-First, install tightvnc:
+### SSH Terminal
+1. Select the "FlyWeb SSH Terminal" service advertised over FlyWeb from within Firefox.
+2. Input the password for the pi user on your device (default: "raspberry").
 
-  `sudo apt-get install tightvncserver`
-
- Run `vncserver`. It will prompt you to set a password for VNC.
-
-Then, add the following lines to `/etc/rc.local`:
-
-  ```
-  su pi -c 'vncserver'
-  su pi -c 'node /home/pi/FlyPi/remote/app.js -p 3000 --vncport 5901 && node /home/pi/FlyPi/scripts/start.js < /dev/null &'
-  ```
-
-This will start a VNC server and FlyPi whenever the Raspberry Pi boots.
-Reboot, and you should be able to access FlyPi using FlyWeb, and the VNC
-client at `/vnc`.
-
-Run on HTTP:
------------
-
-    node app.js -p 3000
-
-If you run it as root it will launch `/bin/login` (where you can specify
-the user name), else it will launch `ssh` and connect by default to
-`localhost`.
-
-If instead you wish to connect to a remote host you can specify the
-`--sshhost` option, the SSH port using the `--sshport` option and the
-SSH user using the `--sshuser` option.
-
-You can also specify the SSH user name in the address bar like this:
-
-  `http://yourserver:3000/wetty/ssh/<username>`
-
-A noVNC client is available at `/vnc`.
-
-Run on HTTPS:
-------------
-
-Always use HTTPS! If you don't have SSL certificates from a CA you can
-create a self signed certificate using this command:
-
-  `openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 30000 -nodes`
-
-And then run:
-
-    node app.js --sslkey key.pem --sslcert cert.pem -p 3000
-
-Again, if you run it as root it will launch `/bin/login`, else it will
-launch SSH to `localhost` or a specified host as explained above.
+### VNC Client
+1. Select the "FlyWeb SSH Terminal" service advertised over FlyWeb from within Firefox.
+2. Add the "/vnc" path to the end of the URL displayed in the top bar.
+3. Input the password for the VNC client (default: "raspberry").
