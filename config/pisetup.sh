@@ -10,7 +10,7 @@ touch /home/pi/4
 vncserver
 touch /home/pi/5
 
-git clone https://github.com/flyweb/FlyPi.git && cd FlyPi && git checkout feature/config
+git clone https://github.com/flyweb/FlyPi.git && cd FlyPi
 touch /home/pi/6
 sudo npm install -g node-gyp && npm install
 touch /home/pi/7
