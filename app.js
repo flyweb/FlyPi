@@ -72,8 +72,11 @@ process.on('uncaughtException', function(e) {
 var httpServer, wsServer;
 
 var app = express();
+app.get('/ssh', function(req, res) {
+    res.sendfile(__dirname + '/public/wetty/index.html');
+});
 app.get('/ssh/:user', function(req, res) {
-    res.sendfile(__dirname + '/public/wetty/ssh.html');
+    res.sendfile(__dirname + '/public/wetty/index.html');
 });
 app.get('/vnc', function(req, res) {
     res.sendfile(__dirname + '/novnc/vnc.html');
