@@ -101,7 +101,7 @@ if (runhttps) {
 
 // Start advertisement for SSH terminal over FlyWeb
 var advertisement = mdns.createAdvertisement(mdns.tcp('flyweb'), opts.port, {
-  name: 'Flyweb SSH Terminal',
+  name: 'FlyPi',
   txtRecord: {}
 });
 advertisement.start();
