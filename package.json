@@ -4,14 +4,10 @@
   "private": true,
   "dependencies": {
     "express": "^4.15.0",
-    "express-validation": "^1.0.1",
-    "joi": "^10.2.2",
     "mdns": "^2.3.3",
-    "npm-polymer-elements": "0.0.1",
     "optimist": "^0.6",
     "pty.js": "^0.3.0",
-    "socket.io": "^1.3.7",
-    "wifi-control": "^2.0.0"
+    "socket.io": "^1.3.7"
   },
   "scripts": {
     "start": "sudo node remote/app.js -p 3001 & sudo node scripts/start.js",
