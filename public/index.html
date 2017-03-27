@@ -3,12 +3,40 @@
 
 <head>
     <title>FlyPi</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 
 <body>
-    <h1>FlyPi</h1>
-    <a href="/ssh">SSH Client</a><br/>
-    <a href="/vnc">VNC Client</a>
+    <div id="container">
+      <nav class="navbar navbar-light bg-faded">
+        <a class="navbar-brand" href="https://flyweb.github.io/">
+          <img src="/img/logo-flyweb-white.svg" width="60" height="60" class="d-inline-block align-top" alt="">
+        </a>
+      </nav>
+      <div class="textContainer">
+        <h1>Welcome to FlyPi!</h1>
+        <p class="lead text">Access your Raspberry Pi using the SSH or VNC client below.</p>
+      </div>
+      <div id="buttonContainer">
+        <a href="/ssh">
+          <div class="butt ssh" type="button">
+              <div class="iconContainer">
+                <img src="/img/terminal.png" class="icon">
+              </div>
+              <p class="buttonLabel">SSH Client</p>
+          </div>
+        </a>
+        <a href="/vnc">
+          <div class="butt vnc" type="button">
+              <div class="iconContainer">
+                <img src="/img/desktop.png" class="icon">
+              </div>
+              <p class="buttonLabel">VNC Client</p>
+          </div>
+        </a>
+      </div>
+    </div>
 </body>
 
 </html>
